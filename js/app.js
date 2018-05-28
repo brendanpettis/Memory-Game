@@ -75,7 +75,6 @@ const reset = () => {
 
 // TODO Convert this old school function to an arrow function at some point
 function cardClick() {
-
 	// Validation to give application time to execute... otherwise BUGS! >:(
 	if (clickedCards.length === 2 || matchedCards.includes(this.id)) {
 		return;
