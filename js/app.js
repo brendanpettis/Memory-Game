@@ -37,11 +37,15 @@ const shuffle = (array) => {
  */
 
 const newGame = () => {
-    let shuffledDeck = shuffle(cardDeck);
+	let partialId = 0;
+	let shuffledDeck = shuffle(cardDeck);
+	
 	for(card of shuffledDeck){
+		card.id = 'card-' + partialId;
 		gameBoard.appendChild(card);
 		card.classList.remove('open','show','match');
 		card.addEventListener('click', cardClick);
+		partialId++;
 	}
 };
 
@@ -52,6 +56,7 @@ const reset = () => {
 	matches = 0;
 	seconds = 0;
 	minutes = 0;
+	clickedCards = [];
 	determineRating(moves);
 	resetBtn.addEventListener('click', newGame());
 	timerContent.innerHTML = `<span class="time">Time: 0${minutes}:0${seconds}</span>`;
@@ -65,8 +70,27 @@ const reset = () => {
 
 // TODO Convert this old school function to an arrow function at some point
 function cardClick() {
-	this.classList.add('show', 'open');	
-	clickedCards.push(event.target);
+	// Validation to give application time to execute... otherwise BUGS! >:(
+	if (clickedCards.length === 2){
+		return;
+	}
+	// Validation++ to make sure the same card cannot be clicked twice rapidly
+	if(clickedCards.length === 0 || this.id != clickedCards[0].id){
+		this.classList.add('show', 'open');	
+		clickedCards.push(event.target);
+	}
+	else {
+		return;
+	}
+	determineAction();
+	determineRating(moves);
+}
+
+/*
+ * For More Abstraction because why not?
+ */
+
+const determineAction = () => {
 	if(clickedCards.length === 2){
 		moves++;		
 		if(moves === 1){
@@ -79,8 +103,7 @@ function cardClick() {
 			failedPair();
 		}
 	}
-	determineRating(moves);
-}
+};
 
 /*
  * For Matching && Failed Pairs
