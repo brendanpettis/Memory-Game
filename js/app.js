@@ -12,6 +12,7 @@ const timerContent = document.querySelector('.time');
 // Instance Specific
 let cardDeck = [...cards];
 let clickedCards = [];
+let matchedCards = [];
 let moves = 0;
 let matches = 0;
 let stars = [];
@@ -58,6 +59,8 @@ const reset = () => {
 	seconds = 0;
 	minutes = 0;
 	clickedCards = [];
+	matchedCards = [];
+	stars = [];
 	timeTrigger = true;
 	determineRating(moves);
 	resetBtn.addEventListener('click', newGame());
@@ -72,8 +75,9 @@ const reset = () => {
 
 // TODO Convert this old school function to an arrow function at some point
 function cardClick() {
+
 	// Validation to give application time to execute... otherwise BUGS! >:(
-	if (clickedCards.length === 2){
+	if (clickedCards.length === 2 || matchedCards.includes(this.id)) {
 		return;
 	}
 	// Validation++ to make sure the same card cannot be clicked twice rapidly
@@ -119,8 +123,10 @@ const matchingPair = () => {
 	clickedCards[0].classList.add('match', 'pulse');
 	event.target.classList.remove('open', 'show');
 	event.target.classList.add('match', 'pulse');
+	matchedCards.push(clickedCards[0].id);
+	matchedCards.push(clickedCards[1].id);
 	clickedCards = [];
-
+	
 	checkForWin();
 };
 
@@ -186,7 +192,7 @@ const displayModal = () => {
 	`<h1 class="heading-one">Congratulations!</h1>
 	<h4 class="heading-three">Your Stats</h4>
 	<p class="sub-heading">Moves:</p><p class="text-white">${moves}</p>
-	<p class="sub-heading">Time:</p><p class="text-white">${minutes}&nbsp;:&nbsp;${seconds}</p>
+	<p class="sub-heading">Time:</p><p class="text-white">${minutes} minutes and ${seconds} seconds!</p>
 	<p class="sub-heading">Rating:</p><p class="stars-modal text-white">${stars}</p>
 	<p class="text-white">Play Again?</p>
 	<div class="restart" onclick="reset()">
