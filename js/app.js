@@ -18,6 +18,7 @@ let stars = [];
 let time = 0;
 let minutes = 0;
 let seconds = 0;
+let timeTrigger = true;
 
 // Cupid Shuffle 
 const shuffle = (array) => {
@@ -57,6 +58,7 @@ const reset = () => {
 	seconds = 0;
 	minutes = 0;
 	clickedCards = [];
+	timeTrigger = true;
 	determineRating(moves);
 	resetBtn.addEventListener('click', newGame());
 	timerContent.innerHTML = `<span class="time">Time: 0${minutes}:0${seconds}</span>`;
@@ -76,13 +78,18 @@ function cardClick() {
 	}
 	// Validation++ to make sure the same card cannot be clicked twice rapidly
 	if(clickedCards.length === 0 || this.id != clickedCards[0].id){
+
+		if(timeTrigger){
+			timerStart();
+			timeTrigger = false;
+		}
 		this.classList.add('show', 'open');	
 		clickedCards.push(event.target);
+		determineAction();			
 	}
 	else {
 		return;
 	}
-	determineAction();
 	determineRating(moves);
 }
 
@@ -91,11 +98,8 @@ function cardClick() {
  */
 
 const determineAction = () => {
-	if(clickedCards.length === 2){
-		moves++;		
-		if(moves === 1){
-			timerStart();
-		}		
+	if(clickedCards.length ===2 ){
+		moves++;	
 		displayMoves(moves);
 		if(clickedCards[0].innerHTML === clickedCards[1].innerHTML){
 			matchingPair();
